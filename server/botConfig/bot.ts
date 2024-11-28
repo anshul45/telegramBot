@@ -16,6 +16,5 @@ const bot = new TelegramBot(token, { polling: true});
 bot.on('polling_error', (error) => {
   console.error('Polling error details:', error);
 });
-   
 
 export default bot;
