@@ -1,46 +1,104 @@
-import { Message } from "node-telegram-bot-api"
-import bot from "../botConfig/bot"
+import { Message } from "node-telegram-bot-api";
+import bot from "../botConfig/bot";
+
+import { addUserSubscription, checkUserSubscription, unsubscribeUser } from "../services/apiService";
+import { getWeatherDetail } from "../services/weatherService";
 
 
-const getWeather = (city:string) => {
-const weatherData = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.WEATHER_API}`
-return weatherData;
-}
-
-export const startBot = (msg:Message) => {
-    const chatId = msg.chat.id;
-    const name = msg.chat.first_name;
-bot.sendMessage(chatId,` Hi ${name} Welcome to WeatherBot!
+const messages = {
+    welcome: (name: string) => `Hi ${name}! Welcome to WeatherBot!
 
 I can send you the current weather of any city around the world. 
 
 Just send me the city's name here!
 
-Example: Delhi
+Example: Delhi`,
+    subscribeSuccess: (name: string) => `Hi ${name}, You have successfully subscribed to our bot.`,
+    unsubscribeSuccess: (name: string) => `Hi ${name}, You have successfully unsubscribed from our bot.`,
+    invalidInput: "Invalid input. Please provide a valid city name.",
+    blockedUser: "⚠️ You are currently blocked from using this bot and cannot access the requested data. Thank you.",
+    subscriptionRequired: "Please subscribe using /subscribe to continue using the bot. Thank you.",
+    errorFetchingWeather: "An error occurred. Please ensure that you have entered the correct city name.",
+    rateLimitWarning: "⚠️ You're sending messages too quickly. Please wait a moment.",
+    unexpectedError: "❌ An unexpected error occurred. Please try again later.",
+};
 
-`)
-}
 
-export const sendWeatherUpdate = (msg:Message) => {
-    if (msg.text !== "/start") {
-        const chatId = msg.chat.id;
-        if(msg.text)
-        {
-        const data = getWeather(msg.text)
 
-        if(data) {
-            console.log(data)
-            bot.sendMessage(chatId,"here is ur weather update")
+const restrictedCommands = ["/start", "/subscribe", "/unsubscribe"];
+
+export const startBot = (msg: Message) => {
+    const chatId = msg.chat.id;
+    const name = msg.chat.first_name || "there";
+    bot.sendMessage(chatId, messages.welcome(name));
+};
+
+export const subscribe = async (msg: Message) => {
+    const chatId = msg.chat.id.toString();
+    const name = msg.chat.first_name || "there";
+    const username = msg.chat.username;
+
+    try {
+        if (chatId && name && username) {
+            await addUserSubscription(chatId, name, username);
         }
-        else{
-            bot.sendMessage(chatId,"An error occurred. Please make sure that you have entered the correct city")
-        }
-
-        }
-        
+        bot.sendMessage(chatId, messages.subscribeSuccess(name));
+    } catch (error) {
+        console.error("Error subscribing user:", error);
+        bot.sendMessage(chatId, messages.unexpectedError);
     }
-}
+};
 
+export const unsubscribe = async (msg: Message) => {
+    const chatId = msg.chat.id.toString();
+    const name = msg.chat.first_name || "there";
 
+    try {
+        await unsubscribeUser(chatId);
+        bot.sendMessage(chatId, messages.unsubscribeSuccess(name));
+    } catch (error) {
+        console.error("Error unsubscribing user:", error);
+        bot.sendMessage(chatId, messages.unexpectedError);
+    }
+};
 
-// bot.sendMessage(chatId,"Please subscribe to @whbots to continue using the bot. Thank you.")
+export const sendWeatherUpdate = async (msg: Message) => {
+    const chatId = msg.chat.id.toString();
+
+    try {
+        const userInput = msg.text?.trim();
+
+        if (!userInput) {
+            bot.sendMessage(chatId, "Please provide a valid input.");
+            return;
+        }
+
+        if ( !restrictedCommands.includes(userInput.toLowerCase())) {
+           
+        
+
+        // Check subscription status
+        const subscription = await checkUserSubscription(chatId);
+        if (!subscription) {
+            bot.sendMessage(chatId, messages.subscriptionRequired);
+            return;
+        }
+
+        if (subscription.status === "BLOCKED") {
+            bot.sendMessage(chatId, messages.blockedUser);
+            return;
+        }
+
+        // Fetch weather details
+        const weatherData = await getWeatherDetail(userInput);
+        if (weatherData) {
+            bot.sendMessage(chatId, weatherData);
+        } else {
+            bot.sendMessage(chatId, messages.errorFetchingWeather);
+        }
+    }
+    } catch (error) {
+        console.error("Error in sendWeatherUpdate:", error);
+        bot.sendMessage(chatId, messages.unexpectedError);
+    }
+};

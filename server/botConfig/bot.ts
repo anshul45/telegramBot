@@ -10,7 +10,9 @@ if (!token) {
   throw new Error('Bot token is missing. Please set BOT_TOKEN in your environment variables.');
 }
 
-const bot = new TelegramBot(token, { polling: true});
+const bot = new TelegramBot(token, { polling: {
+  interval:10000
+}});
 
 
 bot.on('polling_error', (error) => {
