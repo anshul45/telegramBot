@@ -1,46 +1,75 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
-interface response {
-id:string,
-user_id:string,
-username: string | null,
-first_name: string,
-status: 'ACTIVE' | 'BLOCKED',
-createdAt: string,
-updatedAt: string
+// Define response type
+export interface UserSubscriptionResponse {
+  id: string;
+  user_id: string;
+  username: string | null;
+  first_name: string;
+  status: "ACTIVE" | "BLOCKED";
+  createdAt: string;
+  updatedAt: string;
 }
 
+interface apiKeyData {
+id:string,
+type:'WEATHER'|'BOT',
+key:string,
+createdAt:string,
+updatedAt:string
+}
 
+// Axios instance for reusability
+const apiClient: AxiosInstance = axios.create({
+  baseURL: "http://localhost:3000/api/subscribe"
+});
 
-
-export const checkUserSubscription = async (user_id: string): Promise<response | null> => {
+// Check user subscription
+export const checkUserSubscription = async (
+  userId: string
+): Promise<UserSubscriptionResponse | null> => {
   try {
-      const response = await axios.get(`http://localhost:3000/api/subscribe/${user_id}`);
-      return response.data;
+    const { data } = await apiClient.get<UserSubscriptionResponse>(`/${userId}`);
+    return data;
   } catch (error) {
-      console.error("Error checking subscription:", error);
-      return null;
+    console.error("Error checking subscription:", error);
+    return null;
   }
 };
 
+// Add user subscription
+export const addUserSubscription = async (
+  user_id: string,
+  username: string,
+  first_name: string
+): Promise<boolean> => {
+  try {
+    await apiClient.post("/", { user_id, username, first_name });
+    return true;
+  } catch (error) {
+    console.error("Error adding subscription:", error);
+    return false;
+  }
+};
 
+// Unsubscribe user
+export const unsubscribeUser = async (userId: string): Promise<boolean> => {
+  try {
+    await apiClient.delete(`?userId=${userId}`);
+    return true;
+  } catch (error) {
+    console.error("Error unsubscribing user:", error);
+    return false;
+  }
+};
 
-
-export const addUserSubscription = async(user_id:string, username:string, first_name:string) => {
-
-
-   const response =  await axios.post("http://localhost:3000/api/subscribe",{
-        user_id,
-        username,
-        first_name
-      })
+export const getApiKey = async(apiType:string):Promise<apiKeyData> => {
+  try {
+    const data = await axios.get("http://localhost:3000/api/apiKey?apiType="+apiType);
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching API key:", error);
+    throw new Error("Unable to fetch API key.");
+  }
+ 
 }
-
-
-export const unsubscribeUser = async(user_id:string) => {
-  const response = await axios.delete(`http://localhost:3000/api/subscribe?userid=${user_id}`);
-}
-
-
-
-

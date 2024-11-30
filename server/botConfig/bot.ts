@@ -1,22 +1,22 @@
 import TelegramBot from "node-telegram-bot-api";
-import dotenv from "dotenv"
+import { getApiKey } from "../services/apiService";
 
-dotenv.config()
+let bot: TelegramBot | undefined;
 
-const token = process.env.BOT_TOKEN;
+export const startBot = async (): Promise<TelegramBot> => {
+  try {
+    const response = await getApiKey("BOT");
+    const token = response.key;
 
+    if (!token || typeof token !== "string") {
+      throw new Error("Bot token is missing or invalid.");
+    }
 
-if (!token) {
-  throw new Error('Bot token is missing. Please set BOT_TOKEN in your environment variables.');
-}
+    bot = new TelegramBot(token, { polling: true });
+    return bot;
+  } catch (error) {
+    console.error("Error starting bot:", error);
+    process.exit(1);
+  }
+};
 
-const bot = new TelegramBot(token, { polling: {
-  interval:10000
-}});
-
-
-bot.on('polling_error', (error) => {
-  console.error('Polling error details:', error);
-});
-
-export default bot;

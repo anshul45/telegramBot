@@ -1,6 +1,19 @@
-import bot from "./botConfig/bot";
+import TelegramBot from "node-telegram-bot-api";
+import { startBot } from "./botConfig/bot";
 import { botRoutes } from "./routes/botRoutes";
 
-botRoutes()
+const initializeApp = async () => {
+  try {
 
-bot.startPolling();
+    const bot:TelegramBot = await startBot(); 
+
+    botRoutes(bot); 
+    
+
+  } catch (error) {
+    console.error("Failed to initialize application:", error);
+    process.exit(1); 
+  }
+};
+
+initializeApp();

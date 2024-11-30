@@ -1,5 +1,4 @@
-import { Message } from "node-telegram-bot-api";
-import bot from "../botConfig/bot";
+import TelegramBot, { Message } from "node-telegram-bot-api";
 
 import { addUserSubscription, checkUserSubscription, unsubscribeUser } from "../services/apiService";
 import { getWeatherDetail } from "../services/weatherService";
@@ -27,20 +26,20 @@ Example: Delhi`,
 
 const restrictedCommands = ["/start", "/subscribe", "/unsubscribe"];
 
-export const startBot = (msg: Message) => {
+export const startBot = (bot:TelegramBot, msg: Message) => {
     const chatId = msg.chat.id;
     const name = msg.chat.first_name || "there";
     bot.sendMessage(chatId, messages.welcome(name));
 };
 
-export const subscribe = async (msg: Message) => {
+export const subscribe = async (bot:TelegramBot, msg: Message) => {
     const chatId = msg.chat.id.toString();
     const name = msg.chat.first_name || "there";
     const username = msg.chat.username;
 
     try {
         if (chatId && name && username) {
-            await addUserSubscription(chatId, name, username);
+            await addUserSubscription(chatId, username, name);
         }
         bot.sendMessage(chatId, messages.subscribeSuccess(name));
     } catch (error) {
@@ -49,7 +48,7 @@ export const subscribe = async (msg: Message) => {
     }
 };
 
-export const unsubscribe = async (msg: Message) => {
+export const unsubscribe = async (bot:TelegramBot, msg: Message) => {
     const chatId = msg.chat.id.toString();
     const name = msg.chat.first_name || "there";
 
@@ -62,7 +61,7 @@ export const unsubscribe = async (msg: Message) => {
     }
 };
 
-export const sendWeatherUpdate = async (msg: Message) => {
+export const sendWeatherUpdate = async (bot:TelegramBot, msg: Message) => {
     const chatId = msg.chat.id.toString();
 
     try {

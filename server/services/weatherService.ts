@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiKey } from "./apiService";
 
 interface WeatherData {
     coord: { lon: number; lat: number };
@@ -67,10 +68,16 @@ const formatWeatherResponse = (data: WeatherData): string => {
     `.trim();
 };
 
+
+  
+  
+
 export const getWeatherDetail = async (city: string): Promise<string> => {
     try {
+        const weatherKey = await getApiKey("WEATHER");
+        if(!weatherKey) throw new Error("Unable to fetch weather  api key. Please try again later.");
         const response = await axios.get<WeatherData>(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.WEATHER_API}`
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherKey.key}`
         );
         return formatWeatherResponse(response.data);
     } catch (error) {
