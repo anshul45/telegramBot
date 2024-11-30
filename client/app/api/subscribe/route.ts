@@ -29,7 +29,7 @@ export async function POST(request:Request){
 
 export async function DELETE(request:Request){
   const url = new URL(request.url);
-  const userId = url.searchParams.get('userid');
+  const userId = url.searchParams.get('userId');
 
   if(!userId)
   {

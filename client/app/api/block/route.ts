@@ -11,8 +11,6 @@ export async function PUT(request:Request) {
         status : "BLOCKED"
     }})
 
-    console.log(res)
-
     return  Response.json({"User Blocked Sucessfully":res},{status:200})
 
 }
@@ -31,4 +29,13 @@ export async function DELETE(request:Request) {
     }})
     return  Response.json({"User Unblocked Sucessfully":res},{status:200})
 
+}
+
+export async function GET(request:Request){
+    try {
+        const res = await prisma.user.findMany({where:{status : 'BLOCKED'}})
+        return Response.json(res,{status:200})
+    } catch (error) {
+        
+    }
 }

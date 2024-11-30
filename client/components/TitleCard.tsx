@@ -6,6 +6,7 @@ interface TitleCardProps{
 }
 
 const TitleCard:React.FC<TitleCardProps> = ({title, desc}) => {
+  
   return (
     <div>
       <h1 className="font-semibold text-2xl">{title}</h1>

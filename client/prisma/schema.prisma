@@ -12,6 +12,11 @@ enum UserStatus {
   BLOCKED     
 }
 
+enum ApiType{
+  BOT
+  WEATHER
+}
+
 model User {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   user_id     String     @unique 
@@ -20,4 +25,12 @@ model User {
   status      UserStatus @default(ACTIVE) 
   createdAt   DateTime   @default(now())   
   updatedAt   DateTime   @updatedAt        
+}
+
+model ApiKey {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  type       ApiType    @unique 
+  key        String    @unique
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
