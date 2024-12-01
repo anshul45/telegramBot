@@ -21,7 +21,7 @@ updatedAt:string
 
 // Axios instance for reusability
 const apiClient: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/subscribe"
+  baseURL: "https://telegram-bot-phi-ivory.vercel.app/api/subscribe"
 });
 
 // Check user subscription
@@ -65,7 +65,7 @@ export const unsubscribeUser = async (userId: string): Promise<boolean> => {
 
 export const getApiKey = async(apiType:string):Promise<apiKeyData> => {
   try {
-    const data = await axios.get("http://localhost:3000/api/apiKey?apiType="+apiType);
+    const data = await axios.get("https://telegram-bot-phi-ivory.vercel.app/api/apiKey?apiType="+apiType);
     return data.data;
   } catch (error) {
     console.error("Error fetching API key:", error);

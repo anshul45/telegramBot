@@ -12,6 +12,17 @@ I can send you the current weather of any city around the world.
 Just send me the city's name here!
 
 Example: Delhi`,
+
+    help:(name:string) => `Hi ${name}! Welcome to WeatherBot!
+
+    You can control me by sending these commands:
+    
+    /start - To Start bot
+    /subscribe - To Subscribe bot
+    /unsubscribe - To Unsubscribe bot
+    /help - For help
+    Just send me the city's name to fetch weather data!
+    Example: Delhi`,
     subscribeSuccess: (name: string) => `Hi ${name}, You have successfully subscribed to our bot.`,
     unsubscribeSuccess: (name: string) => `Hi ${name}, You have successfully unsubscribed from our bot.`,
     invalidInput: "Invalid input. Please provide a valid city name.",
@@ -24,12 +35,18 @@ Example: Delhi`,
 
 
 
-const restrictedCommands = ["/start", "/subscribe", "/unsubscribe"];
+const restrictedCommands = ["/start", "/subscribe", "/unsubscribe","/help"];
 
 export const startBot = (bot:TelegramBot, msg: Message) => {
     const chatId = msg.chat.id;
     const name = msg.chat.first_name || "there";
     bot.sendMessage(chatId, messages.welcome(name));
+};
+
+export const help = (bot:TelegramBot, msg: Message) => {
+    const chatId = msg.chat.id;
+    const name = msg.chat.first_name || "there";
+    bot.sendMessage(chatId, messages.help(name));
 };
 
 export const subscribe = async (bot:TelegramBot, msg: Message) => {
