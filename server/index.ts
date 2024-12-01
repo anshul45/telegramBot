@@ -1,6 +1,13 @@
 import TelegramBot from "node-telegram-bot-api";
 import { startBot } from "./botConfig/bot";
 import { botRoutes } from "./routes/botRoutes";
+import express, { Request, Response } from "express";
+import dotenv from "dotenv"
+
+
+dotenv.config();
+
+const app = express();
 
 const initializeApp = async () => {
   try {
@@ -17,3 +24,13 @@ const initializeApp = async () => {
 };
 
 initializeApp();
+
+const port = process.env.PORT || 3001;
+
+// Dummy HTTP endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).send('Sorry, cant find that');
+});
+
+// Start server
+app.listen(port, () => console.log(`Listening on port ${port}`));
