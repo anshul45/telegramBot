@@ -1,40 +1,40 @@
 import { ManageApi, UserResponse } from "./types";
 
-const url = "http://localhost:3000/api/"
+const url =  process.env.API_BASE_URL || 'http://localhost:3000/api';
 
 export const fetchAllUsers = async() => {
-    const data = await fetch("http://localhost:3000/api/subscribe");
+    const data = await fetch(url+"/subscribe");
     const usersData:UserResponse[] = await data.json();
     return usersData;
 }
 
 export const fetchAllBlockedUsers = async () => {
-  const data = await fetch("http://localhost:3000/api/block");
+  const data = await fetch(url + "/block");
   const usersData:UserResponse[] = await data.json();
   return usersData;
 }
 
 export const blockUser = async (userId:string) => {
-    const response = await fetch ("http://localhost:3000/api/block?userId="+userId,{method:"PUT"})
+    const response = await fetch (url+"/block?userId="+userId,{method:"PUT"})
 }
 
 export const unBlockUser = async (userId:string) => {
-    const response = await fetch ("http://localhost:3000/api/block?userId="+userId,{method:"DELETE"})
+    const response = await fetch (url+"/block?userId="+userId,{method:"DELETE"})
 }
 
 
 export const deleteUser = async (userId:string) => {
-    const response = await fetch ("http://localhost:3000/api/subscribe?userId="+userId,{method:"DELETE"})
+    const response = await fetch (url+"/subscribe?userId="+userId,{method:"DELETE"})
 }
 
 export const fetchApiKey = async (apiType:string) => {
-  const data = await fetch("http://localhost:3000/api/apiKey?apiType="+apiType);
+  const data = await fetch(url+"/apiKey?apiType="+apiType);
   const usersData:ManageApi = await data.json();
   return usersData;
 }
 
 export const addApiKey = async (apiType: string, apiKey: string) => {
-    const response = await fetch(`http://localhost:3000/api/apiKey?apiType=${apiType}`, {
+    const response = await fetch(url+`/apiKey?apiType=${apiType}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
