@@ -1,16 +1,19 @@
 "use client"
 import { addApiKey, fetchApiKey } from '@/utils/api'
+import { ManageApi } from '@/utils/types'
 import { Button } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 interface ChangeApiCardProps{
   title:string
-  apiKey:any
+  apiKey:ManageApi
 }
 
 const ChangeApiCard:React.FC<ChangeApiCardProps> = ({title,apiKey}) => {
 
-  const[key,setKey] = useState<any>(apiKey)
+  
+
+  const[key,setKey] = useState<ManageApi>(apiKey)
 
   const [value,setValue] = useState<string>("");
 

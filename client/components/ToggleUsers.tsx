@@ -1,11 +1,10 @@
-import { fetchAllBlockedUsers } from '@/utils/api';
-import React, { useState } from 'react';
+import React from 'react';
 
 interface ToggleUsersProps {
   toggles: string[];
   count: number;
   selected:string;
-  setSelected: any;
+  setSelected: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ToggleUsers: React.FC<ToggleUsersProps> = ({ toggles, count,selected,setSelected }) => {

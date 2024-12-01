@@ -4,10 +4,16 @@ import TitleCard from './TitleCard'
 import UsersCard from './UsersCard'
 import ToggleUsers from './ToggleUsers'
 import UserTable from './UserTable'
+import { UserResponse } from '@/utils/types';
 
-const ClientHome = ({usersData,blockedUsersData}:any) => {
-    const[users,setUsers] = useState(usersData);
-    const[blockedUsers,setBlockedUsers] = useState(blockedUsersData);
+interface ClientHomeProps {
+  usersData:UserResponse[];
+  blockedUsersData:UserResponse[];
+}
+
+const ClientHome : React.FC<ClientHomeProps> = ({usersData,blockedUsersData}) => {
+    const[users,setUsers] = useState<UserResponse[]>(usersData);
+    const[blockedUsers,setBlockedUsers] = useState<UserResponse[]>(blockedUsersData);
     const [selected, setSelected] = useState<string>("View all");
     const flag = "all";
   return (

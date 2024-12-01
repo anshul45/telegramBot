@@ -5,10 +5,21 @@ import { RiDeleteBin3Line } from "react-icons/ri";
 import { VscLock ,VscUnlock} from "react-icons/vsc";
 import { blockUser, deleteUser, fetchAllBlockedUsers, fetchAllUsers, unBlockUser } from '@/utils/api';
 import { NoUsers } from './NoUsers';
+import { UserResponse } from '@/utils/types';
 
-const UserTable = ({flag,setUsers,users,blockedUsers,selected,setBlockedUsers}:any) => {
+interface UserTableProps{
+  flag: "all" | "block";
+  setUsers : React.Dispatch<React.SetStateAction<UserResponse[]>>;
+  users : UserResponse[];
+  blockedUsers : UserResponse[];
+  selected :string;
+  setBlockedUsers: React.Dispatch<React.SetStateAction<UserResponse[]>>;
 
-  const [data, setData] = useState([]);
+}
+
+const UserTable:React.FC<UserTableProps> = ({flag,setUsers,users,blockedUsers,selected,setBlockedUsers}) => {
+
+  const [data, setData] = useState<UserResponse[]>([]);
 
   useEffect(() => {
     if(selected === "View all")
@@ -24,15 +35,15 @@ const UserTable = ({flag,setUsers,users,blockedUsers,selected,setBlockedUsers}:a
 
 
   const fetchData = async() => {
-    if(flag="all")
+    if(flag === "all")
     {
-      const data =  await fetchAllUsers();
+      const data:UserResponse[] =  await fetchAllUsers();
       setUsers(data); 
-      const blockedData:any = await fetchAllBlockedUsers();
+      const blockedData:UserResponse[] = await fetchAllBlockedUsers();
       setBlockedUsers(blockedData)
     }
     else {
-      const blockedData = await fetchAllBlockedUsers();
+      const blockedData:UserResponse[] = await fetchAllBlockedUsers();
       setBlockedUsers(blockedData)
     }
   }
@@ -40,17 +51,17 @@ const UserTable = ({flag,setUsers,users,blockedUsers,selected,setBlockedUsers}:a
   
 
   const handleDelete = async(userId:string) => {
-    const res = await deleteUser(userId);
+    await deleteUser(userId);
     fetchData();
   }
 
   const handleBlock = async(userId:string,status:string) => {
     if(status === "ACTIVE")
     {
-     const res = await blockUser(userId)
+      await blockUser(userId)
     }
     else {
-      const res = await unBlockUser(userId)
+      await unBlockUser(userId)
     }
     fetchData();
   }
@@ -74,7 +85,7 @@ const UserTable = ({flag,setUsers,users,blockedUsers,selected,setBlockedUsers}:a
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.map((row:any) => (
+          {data?.map((row:UserResponse) => (
             <TableRow key={row.id}>
               <TableCell>{row.user_id}</TableCell>
               <TableCell>{row.username}</TableCell>

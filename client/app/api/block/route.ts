@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 
 export async function PUT(request:Request) {
+    try{
     const url = new URL(request.url);
     const userId = url.searchParams.get('userId');
     if (!userId) {
@@ -12,12 +13,17 @@ export async function PUT(request:Request) {
     }})
 
     return  Response.json({"User Blocked Sucessfully":res},{status:200})
-
+}
+    catch (error) {
+        console.error(error);
+        return new Response("An error occurred while blocking the user.", { status: 500 });
+    }
 }
 
 
 
 export async function DELETE(request:Request) {
+    try{
     const url = new URL(request.url);
     const userId = url.searchParams.get('userId');
     if (!userId) {
@@ -28,14 +34,19 @@ export async function DELETE(request:Request) {
         status : "ACTIVE"
     }})
     return  Response.json({"User Unblocked Sucessfully":res},{status:200})
-
+}
+    catch (error) {
+        console.error(error);
+        return new Response("An error occurred while blocking the user.", { status: 500 });
+    }
 }
 
-export async function GET(request:Request){
+export async function GET(){
     try {
         const res = await prisma.user.findMany({where:{status : 'BLOCKED'}})
         return Response.json(res,{status:200})
-    } catch (error) {
-        
+    }  catch (error) {
+        console.error(error);
+        return new Response("An error occurred while blocking the user.", { status: 500 });
     }
 }

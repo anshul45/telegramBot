@@ -1,15 +1,16 @@
+import { ManageApi, UserResponse } from "./types";
 
 const url = "http://localhost:3000/api/"
 
 export const fetchAllUsers = async() => {
     const data = await fetch("http://localhost:3000/api/subscribe");
-    const usersData = await data.json();
+    const usersData:UserResponse[] = await data.json();
     return usersData;
 }
 
 export const fetchAllBlockedUsers = async () => {
   const data = await fetch("http://localhost:3000/api/block");
-  const usersData = await data.json();
+  const usersData:UserResponse[] = await data.json();
   return usersData;
 }
 
@@ -28,7 +29,7 @@ export const deleteUser = async (userId:string) => {
 
 export const fetchApiKey = async (apiType:string) => {
   const data = await fetch("http://localhost:3000/api/apiKey?apiType="+apiType);
-  const usersData = await data.json();
+  const usersData:ManageApi = await data.json();
   return usersData;
 }
 

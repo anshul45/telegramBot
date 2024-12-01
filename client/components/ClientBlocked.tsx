@@ -4,10 +4,15 @@ import TitleCard from './TitleCard'
 import UsersCard from './UsersCard'
 import ToggleUsers from './ToggleUsers'
 import UserTable from './UserTable'
+import { UserResponse } from '@/utils/types'
 
-const ClientBlocked = ({blockedUsersData}:any) => {
-  const[users,setUsers] = useState([]);
-  const[blockedUsers,setBlockedUsers] = useState(blockedUsersData);
+interface ClientBlockedProps {
+  blockedUsersData:UserResponse[];
+}
+
+const ClientBlocked:React.FC<ClientBlockedProps> = ({blockedUsersData}) => {
+  const[users,setUsers] = useState<UserResponse[]>([]);
+  const[blockedUsers,setBlockedUsers] = useState<UserResponse[]>(blockedUsersData);
   const [selected, setSelected] = useState<string>("BLOCKED");
   const flag = "block";
   return (
