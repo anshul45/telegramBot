@@ -1,14 +1,49 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { VscLock ,VscUnlock} from "react-icons/vsc";
-import { blockUser, deleteUser, unBlockUser } from '@/utils/api';
+import { blockUser, deleteUser, fetchAllBlockedUsers, fetchAllUsers, unBlockUser } from '@/utils/api';
+import { NoUsers } from './NoUsers';
 
-const UserTable = ({data}:any) => {
+const UserTable = ({flag,setUsers,users,blockedUsers,selected,setBlockedUsers}:any) => {
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if(selected === "View all")
+      {
+        setData(users);
+      }
+      else
+      {
+        setData(blockedUsers)
+      }
+    },[selected,users,blockedUsers])
+
+
+
+  const fetchData = async() => {
+    if(flag="all")
+    {
+      const data =  await fetchAllUsers();
+      setUsers(data); 
+      const blockedData:any = await fetchAllBlockedUsers();
+      setBlockedUsers(blockedData)
+    }
+    else {
+      const blockedData = await fetchAllBlockedUsers();
+      setBlockedUsers(blockedData)
+    }
+  }
+
+  
+
   const handleDelete = async(userId:string) => {
     const res = await deleteUser(userId);
+    fetchData();
   }
+
   const handleBlock = async(userId:string,status:string) => {
     if(status === "ACTIVE")
     {
@@ -17,8 +52,14 @@ const UserTable = ({data}:any) => {
     else {
       const res = await unBlockUser(userId)
     }
+    fetchData();
   }
+
+
+
   return (
+  data.length ?  
+  <div className='h-[calc(100vh-295px)]  overflow-y-scroll rounded-md' style={{scrollbarWidth:"none"}}>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -47,6 +88,12 @@ const UserTable = ({data}:any) => {
         </TableBody>
       </Table>
     </TableContainer>
+    </div>
+  :
+  <div className='flex items-center h-[calc(100vh-295px)]'>
+    <NoUsers/>
+  </div>
+  
   );
 };
 
