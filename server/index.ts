@@ -29,7 +29,7 @@ const port = process.env.PORT || 3001;
 
 // Dummy HTTP endpoint
 app.get('/', (req: Request, res: Response) => {
-  res.status(200).send('Sorry, cant find that');
+  res.status(200).send('Telegram Bot Running');
 });
 
 // Start server
