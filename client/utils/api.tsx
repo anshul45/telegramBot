@@ -1,6 +1,6 @@
 import { ManageApi, UserResponse } from "./types";
 
-const url =  process.env.API_BASE_URL || 'http://localhost:3000/api';
+const url = "https://telegram-bot-phi-ivory.vercel.app/api";
 
 export const fetchAllUsers = async() => {
     const data = await fetch(url+"/subscribe");
